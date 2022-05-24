@@ -2,6 +2,7 @@
 @inject IJSRuntime JS
 @using System.Text.Json;
 @using System.Text.Json.Serialization;
+@using System.Net.Http.Headers;
 
 
 <h1>Welcome ToDo Page - here we will consume the new API</h1>
@@ -10,8 +11,7 @@
 
 @*<p role="status">Current count: @count</p>*@
 
-<button class="btn btn-primary" @onclick="AddToDo">Click me</button>
-<button class="btn btn-primary" @onclick="InvokeJavaScript">Invoke Java Script</button>
+
 
 @if (toDoItems == null)
 {
@@ -41,41 +41,89 @@ else
 }
 
 
+  <input @bind="name" placeholder="type name"/>
+  <input @bind="message" placeholder="type message" />
+  <br><br>
+
+  <button class="btn btn-primary" @onclick="AddToDo">Add To Do</button>
+  <button class="btn btn-primary" @onclick="InvokeJavaScript">Invoke Java Script</button>
+  <button class="btn btn-primary" @onclick="DeleteAll">Delete All</button>
+
 @code {
     private int count = 0;
     private string jasonData = string.Empty;
     private List<ToDoItem> toDoItems = null;
 
+    private string name;
+    private string message;
+    HttpClient hc = null;
+
+     private async void DeleteAll()
+    {
+        HttpClient httpClient = new HttpClient();
+        await httpClient.DeleteAsync("https://pcso-norman-api.azurewebsites.net/todoitems");
+        await GetListAsync();
+        StateHasChanged();
+    }
+
+
     private async void AddToDo()
     {
-        count++;
+        //count++;
+
+        hc = new HttpClient();
+
+        ToDoItem todoItemPost = new ToDoItem
+            {
+                message = message,
+                name = name
+            };
+
+        string myContent = JsonSerializer.Serialize(todoItemPost);
+        byte[] buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+        ByteArrayContent byteContent = new ByteArrayContent(buffer);
+
+        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+        await hc.PostAsync("https://pcso-norman-api.azurewebsites.net/todoitems", byteContent);
+
+       
+          await GetListAsync();
+        StateHasChanged();
+                        
+    }
+
+      private async Task GetListAsync()
+    {
+        hc = new HttpClient();
 
 
-        HttpClient hc = new HttpClient();
-        jasonData = await hc.GetStringAsync("https://pcso-norman-api.azurewebsites.net/todoitems/complete");
+        // get all the records
+        jasonData = await hc.GetStringAsync("https://pcso-norman-api.azurewebsites.net/todoitems");
 
         toDoItems = JsonSerializer.Deserialize<List<ToDoItem>>(jasonData);
 
-        StateHasChanged();
+                        name = null;
+                        message = null;
 
     }
 
 
-    private void InvokeJavaScript()
-    {
-        JS.InvokeVoidAsync("DeleteCache");
-        JS.InvokeVoidAsync("HelloAlert");
+                    private void InvokeJavaScript()
+                    {
+                        JS.InvokeVoidAsync("DeleteCache");
+                        JS.InvokeVoidAsync("HelloAlert");
 
-    }
+                    }
 
-    public class ToDoItem
-    {
-        public int id { get; set; }
-        public string  name { get; set; }
-        public bool isComplete { get; set; }
-        public string message { get; set; }
-        public DateTime created { get; set; }
-    }
+                    public class ToDoItem
+                    {
+                        public int id { get; set; }
+                        public string  name { get; set; }
+                        public bool isComplete { get; set; }
+                        public string message { get; set; }
+                        public DateTime created { get; set; }
+                    }
 
 
-}
+                }
