@@ -1,0 +1,81 @@
+﻿@page "/todo"
+@inject IJSRuntime JS
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+
+
+<h1>Welcome ToDo Page - here we will consume the new API</h1>
+
+@*<h3>@jasonData</h3>*@
+
+@*<p role="status">Current count: @count</p>*@
+
+<button class="btn btn-primary" @onclick="AddToDo">Click me</button>
+<button class="btn btn-primary" @onclick="InvokeJavaScript">Invoke Java Script</button>
+
+@if (toDoItems == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Message</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var todoitem in toDoItems)
+            {
+                <tr>
+                    <td>@todoitem.name</td>
+                    <td>@todoitem.message</td>
+                    <td>@todoitem.created.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private int count = 0;
+    private string jasonData = string.Empty;
+    private List<ToDoItem> toDoItems = null;
+
+    private async void AddToDo()
+    {
+        count++;
+
+
+        HttpClient hc = new HttpClient();
+        jasonData = await hc.GetStringAsync("https://pcso-norman-api.azurewebsites.net/todoitems/complete");
+
+        toDoItems = JsonSerializer.Deserialize<List<ToDoItem>>(jasonData);
+
+        StateHasChanged();
+
+    }
+
+
+    private void InvokeJavaScript()
+    {
+        JS.InvokeVoidAsync("DeleteCache");
+        JS.InvokeVoidAsync("HelloAlert");
+
+    }
+
+    public class ToDoItem
+    {
+        public int id { get; set; }
+        public string  name { get; set; }
+        public bool isComplete { get; set; }
+        public string message { get; set; }
+        public DateTime created { get; set; }
+    }
+
+
+}
