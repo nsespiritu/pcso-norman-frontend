@@ -41,15 +41,36 @@ else
 }
 
 
-  <input @bind="name" placeholder="type name"/>
-  <input @bind="message" placeholder="type message" />
+@*  <input @bind="name" placeholder="type name"/>
+  <input @bind="message" placeholder="type message" />*@
+
+<MudTextField @bind-Value="name" Label="Name" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="message" Label="Message" Variant="Variant.Outlined"></MudTextField>
+
+
   <br><br>
 
-  <button class="btn btn-primary" @onclick="AddToDo">Add To Do</button>
+   <MudButton Variant="Variant.Filled" 
+            EndIcon="@Icons.Material.Filled.Send" 
+            OnClick="AddToDo"
+            Color="Color.Primary">Add</MudButton>
+
+ <MudButton Variant="Variant.Filled" 
+            EndIcon="@Icons.Material.Filled.Send" 
+            OnClick="InvokeJavaScript"
+            Color="Color.Primary">Update App</MudButton>
+
+<MudButton Variant="Variant.Filled" 
+            EndIcon="@Icons.Material.Filled.Send"
+            OnClick="DeleteAll"
+            Color="Color.Primary">Delete List</MudButton>
+
+
+@*  <button class="btn btn-primary" @onclick="AddToDo">Add To Do</button>
   <button class="btn btn-primary" @onclick="InvokeJavaScript">Invoke Java Script</button>
   <button class="btn btn-primary" @onclick="DeleteAll">Delete All</button>
 
-  <MudButton Variant="Variant.Filled" Color="Color.Primary">Primary</MudButton>
+  <MudButton Variant="Variant.Filled" Color="Color.Primary">Primary</MudButton>*@
 
 @code {
     private int count = 0;
@@ -58,6 +79,8 @@ else
 
     private string name;
     private string message;
+    private bool isComplete;
+
     HttpClient hc = null;
 
      private async void DeleteAll()
@@ -78,7 +101,8 @@ else
         ToDoItem todoItemPost = new ToDoItem
             {
                 message = message,
-                name = name
+                name = name,
+                isComplete = isComplete
             };
 
         string myContent = JsonSerializer.Serialize(todoItemPost);
