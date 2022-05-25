@@ -97,6 +97,11 @@ else
 
     HttpClient hc = null;
 
+    protected async override Task OnInitializedAsync()
+    {
+        await GetListAsync();
+        base.OnInitializedAsync();
+    }
 
 
     private async void DeleteAll()
