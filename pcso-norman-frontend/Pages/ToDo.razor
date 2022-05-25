@@ -11,9 +11,23 @@
 
 @*<p role="status">Current count: @count</p>*@
 
+@if (toDoItems != null)
+{
+    @foreach (var todo in toDoItems)
+    {
+        <MudCard>
+            <!--MudCardMedia Image="images/satya.jfif" Height="50" /-->
+            <MudCardContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">@todo.name</MudText>
+                <MudText Typo="Typo.body1">@todo.message</MudText>
+                <MudText Typo="Typo.body2">@todo.created</MudText>  
+            </MudCardContent>
+        </MudCard>
+        <br />
+    }
+}
 
-
-@if (toDoItems == null)
+@*@if (toDoItems == null)
 {
     <p><em>Loading... version 1.0</em></p>
 }
@@ -33,12 +47,12 @@ else
                 <tr>
                     <td>@todoitem.name</td>
                     <td>@todoitem.message</td>
-                    <td>@todoitem.created.ToShortDateString()</td>
+                    <td>@todoitem.created</td>
                 </tr>
             }
         </tbody>
     </table>
-}
+}*@
 
 
 @*  <input @bind="name" placeholder="type name"/>
@@ -83,14 +97,15 @@ else
 
     HttpClient hc = null;
 
-     private async void DeleteAll()
+
+
+    private async void DeleteAll()
     {
         HttpClient httpClient = new HttpClient();
         await httpClient.DeleteAsync("https://pcso-norman-api.azurewebsites.net/todoitems");
         await GetListAsync();
         StateHasChanged();
     }
-
 
     private async void AddToDo()
     {
@@ -101,8 +116,7 @@ else
         ToDoItem todoItemPost = new ToDoItem
             {
                 message = message,
-                name = name,
-                isComplete = isComplete
+                name = name
             };
 
         string myContent = JsonSerializer.Serialize(todoItemPost);
@@ -119,7 +133,7 @@ else
                         
     }
 
-      private async Task GetListAsync()
+    private async Task GetListAsync()
     {
         hc = new HttpClient();
 
@@ -129,27 +143,26 @@ else
 
         toDoItems = JsonSerializer.Deserialize<List<ToDoItem>>(jasonData);
 
-                        name = null;
-                        message = null;
+        name = null;
+        message = null;
 
     }
 
+    private void InvokeJavaScript()
+    {
+        JS.InvokeVoidAsync("DeleteCache");
+        JS.InvokeVoidAsync("HelloAlert");
 
-                    private void InvokeJavaScript()
-                    {
-                        JS.InvokeVoidAsync("DeleteCache");
-                        JS.InvokeVoidAsync("HelloAlert");
+    }
 
-                    }
-
-                    public class ToDoItem
-                    {
-                        public int id { get; set; }
-                        public string  name { get; set; }
-                        public bool isComplete { get; set; }
-                        public string message { get; set; }
-                        public DateTime created { get; set; } = DateTime.Now;
-                    }
+    public class ToDoItem
+    {
+        public int id { get; set; }
+        public string  name { get; set; }
+        public bool isComplete { get; set; }
+        public string message { get; set; }
+        public DateTime created { get; set; } = DateTime.Now;
+    }
 
 
                 }
