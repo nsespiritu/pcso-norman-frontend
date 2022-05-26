@@ -34,7 +34,7 @@
     {
         hubConnection = new HubConnectionBuilder()   
             //.WithUrl("https://pcso-ali-backend.azurewebsites.net/chat")
-            .WithUrl("https://pcso-norman-api.azurewebsites.net/chat")
+            .WithUrl("https:pcso-norman-api.azurewebsites.net/chat")
             .Build();
 
         hubConnection.On<string, string>("Receive", (name, message) =>
