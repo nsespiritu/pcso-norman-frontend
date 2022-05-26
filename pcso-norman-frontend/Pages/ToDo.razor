@@ -5,13 +5,13 @@
 @using System.Net.Http.Headers;
 
 
-<h1>Welcome ToDo Page - here we will consume the new API</h1>
+@*<h1>Welcome ToDo Page - here we will consume the new API</h1>*@
 
 @*<h3>@jasonData</h3>*@
 
 @*<p role="status">Current count: @count</p>*@
 
-@if (toDoItems != null)
+@*@if (toDoItems != null)
 {
     @foreach (var todo in toDoItems)
     {
@@ -25,7 +25,7 @@
         </MudCard>
         <br />
     }
-}
+}*@
 
 @*@if (toDoItems == null)
 {
@@ -57,6 +57,23 @@ else
 
 @*  <input @bind="name" placeholder="type name"/>
   <input @bind="message" placeholder="type message" />*@
+
+@if (toDoItems != null)
+{
+    @foreach (var todo in toDoItems)
+    {
+        <MudCard>
+            <!--MudCardMedia Image="images/satya.jfif" Height="50" /-->
+            <MudCardContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">@todo.name</MudText>
+                <MudText Typo="Typo.body1">@todo.message</MudText>
+                <MudText Typo="Typo.body2">@todo.created</MudText>  
+            </MudCardContent>
+        </MudCard>
+        <br />
+    }
+}
+
 
 <MudTextField @bind-Value="name" Label="Name" Variant="Variant.Outlined"></MudTextField>
 <MudTextField @bind-Value="message" Label="Message" Variant="Variant.Outlined"></MudTextField>
