@@ -3,7 +3,7 @@
 @using Microsoft.AspNetCore.SignalR.Client
 
 
-// checking for null values
+@*// checking for null values*@
 @if (messages != null)
 {
     @foreach (var message in messages)
@@ -18,9 +18,9 @@
 }
 
 
-
 <MudTextField @bind-Value="name" Label="Name" Variant="Variant.Outlined"></MudTextField>
 <MudTextField @bind-Value="message" Label="Message" Variant="Variant.Outlined"></MudTextField>
+
 <br />
 <MudButton Variant="Variant.Filled"
            EndIcon="@Icons.Material.Filled.Send"
